@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 from thalmetis_edr.published.mcrae_2024 import TABLE3_INPUT_PLACEHOLDERS
@@ -10,7 +11,7 @@ from thalmetis_edr.results import Table3ReproductionResult, Table3ValidationResu
 
 def mcrae_2024_table3_inputs() -> dict[str, Any]:
     """Return placeholder metadata for future McRae 2024 Table 3 inputs."""
-    return dict(TABLE3_INPUT_PLACEHOLDERS)
+    return deepcopy(TABLE3_INPUT_PLACEHOLDERS)
 
 
 def reproduce_table3(**inputs: Any) -> Table3ReproductionResult:

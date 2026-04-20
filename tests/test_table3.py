@@ -26,6 +26,15 @@ def test_table3_inputs_are_placeholder_metadata() -> None:
     assert inputs["model_context"] == "mcrae_2024_table3"
 
 
+def test_table3_inputs_do_not_share_nested_mutable_metadata() -> None:
+    inputs = mcrae_2024_table3_inputs()
+    inputs["notes"].append("caller mutation")
+
+    fresh_inputs = mcrae_2024_table3_inputs()
+
+    assert "caller mutation" not in fresh_inputs["notes"]
+
+
 def test_table3_reproduction_stubs_are_scaffold_only() -> None:
     with pytest.raises(NotImplementedError):
         reproduce_table3()
