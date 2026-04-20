@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: thalmetis-edr
+message: >-
+  If you use thalmetis-edr, please cite this package. A Zenodo DOI will be added after the first GitHub release. Users should also cite McRae et al. 2024 and Walls et al. 2017.
+type: software
+authors:
+  - family-names: McRae
+    given-names: Oliver
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/thalmetis/thalmetis-edr"
+references:
+  - type: article
+    title: "McRae et al. 2024"
+    authors:
+      - family-names: McRae
+        given-names: Oliver
+    year: 2024
+    notes: "Primary source for v0.1 pinch-off / sparging Table 3 reproduction."
+  - type: article
+    title: "Walls et al. 2017"
+    year: 2017
+    notes: "Affected-volume framing and critique of single maximum EDR reliance."
