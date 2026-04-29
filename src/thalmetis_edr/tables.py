@@ -42,6 +42,15 @@ _THRESHOLD_COLUMN_SPECS: tuple[tuple[float, str, str], ...] = (
     (1.0e7, "affected_volume_1e7_nl", "viability_1e7_pct"),
     (1.0e8, "affected_volume_1e8_nl", "viability_1e8_pct"),
 )
+_PATHWAY_INPUT_PROVENANCE_FIELDS: tuple[str, ...] = (
+    "edr_thresholds_w_m3",
+    "total_gas_volume_l",
+    "system_volume_l",
+    "initial_viability_pct",
+    "single_event_viability_loss_pct",
+)
+_PACKAGE_METADATA_PROVENANCE = "McRae 2024 Table 3 metadata"
+_CALLER_OVERRIDE_PROVENANCE = "caller override"
 
 
 def _threshold_suffix(threshold: float) -> str:
@@ -91,6 +100,14 @@ def _resolve_inputs(inputs: dict[str, Any]) -> dict[str, Any]:
     resolved["figure5a_volumes"] = _copy_frame(resolved["figure5a_volumes"])
     resolved["published_table3"] = _copy_frame(resolved["published_table3"])
     resolved["inferred_radii"] = _copy_frame(resolved["inferred_radii"])
+    resolved["_pathway_input_provenance"] = {
+        field: (
+            _CALLER_OVERRIDE_PROVENANCE
+            if field in inputs
+            else _PACKAGE_METADATA_PROVENANCE
+        )
+        for field in _PATHWAY_INPUT_PROVENANCE_FIELDS
+    }
     return resolved
 
 
@@ -324,11 +341,8 @@ def _validate_table3(
             ),
         },
         input_provenance={
-            "edr_thresholds_w_m3": "McRae 2024 Table 3 metadata",
-            "total_gas_volume_l": "McRae 2024 Table 3 metadata",
-            "system_volume_l": "McRae 2024 Table 3 metadata",
-            "initial_viability_pct": "McRae 2024 Table 3 metadata",
-            "single_event_viability_loss_pct": "McRae 2024 Table 3 metadata",
+            field: resolved["_pathway_input_provenance"][field]
+            for field in _PATHWAY_INPUT_PROVENANCE_FIELDS
         },
         source=MCRAE_2024_TABLE_3,
         assumptions=deepcopy(resolved["assumptions"]),
@@ -392,11 +406,8 @@ def estimate_table3_from_figure5a_volumes(**inputs: Any) -> Table3ReproductionRe
             ),
         },
         input_provenance={
-            "edr_thresholds_w_m3": "McRae 2024 Table 3 metadata",
-            "total_gas_volume_l": "McRae 2024 Table 3 metadata",
-            "system_volume_l": "McRae 2024 Table 3 metadata",
-            "initial_viability_pct": "McRae 2024 Table 3 metadata",
-            "single_event_viability_loss_pct": "McRae 2024 Table 3 metadata",
+            field: resolved["_pathway_input_provenance"][field]
+            for field in _PATHWAY_INPUT_PROVENANCE_FIELDS
         },
         source=MCRAE_2024_TABLE_3,
         assumptions=deepcopy(resolved["assumptions"]),
