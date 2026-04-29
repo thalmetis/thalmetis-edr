@@ -138,27 +138,33 @@ def test_reproduce_table3_returns_expected_rounded_calculated_cells() -> None:
             "calc_viability_1e6_pct_rounded",
             "calc_viability_1e7_pct_rounded",
             "calc_viability_1e8_pct_rounded",
+            "clipped_1e6",
+            "clipped_1e7",
+            "clipped_1e8",
         ]
     ].reset_index(drop=True)
 
     expected = pd.DataFrame(
         [
-            (10, 0, 12, 67),
-            (20, 0, 12, 83),
-            (50, 0, 66, 94),
-            (80, 0, 83, 95),
-            (100, 33, 86, 96),
-            (150, 62, 89, 98),
-            (200, 70, 91, 99),
-            (400, 79, 97, 100),
-            (750, 88, 100, 100),
-            (1250, 99, 100, 100),
+            (10, 0, 12, 67, True, False, False),
+            (20, 0, 12, 83, True, False, False),
+            (50, 0, 66, 94, True, False, False),
+            (80, 0, 83, 95, True, False, False),
+            (100, 33, 86, 96, False, False, False),
+            (150, 62, 89, 98, False, False, False),
+            (200, 70, 91, 99, False, False, False),
+            (400, 79, 97, 100, False, False, False),
+            (750, 88, 100, 100, False, False, False),
+            (1250, 99, 100, 100, False, False, False),
         ],
         columns=[
             "thread_radius_um",
             "calc_viability_1e6_pct_rounded",
             "calc_viability_1e7_pct_rounded",
             "calc_viability_1e8_pct_rounded",
+            "clipped_1e6",
+            "clipped_1e7",
+            "clipped_1e8",
         ],
     )
 
@@ -188,6 +194,15 @@ def test_validate_table3_against_published_reports_only_expected_residual_mismat
             "published_viability_pct": 100,
         },
     ]
+    assert result.clipped_cells
+    assert {
+        "thread_radius_um": 10,
+        "edr_threshold_w_m3": 1.0e6,
+        "clipped": True,
+        "final_viability_fraction": 0.0,
+        "final_viability_pct_rounded": 0,
+    } in result.clipped_cells
+    assert "Some Table 3 pathway cells were clipped" in result.warnings[-1]
 
 
 def test_table3_results_mark_caller_overrides_in_input_provenance() -> None:
@@ -210,6 +225,32 @@ def test_table3_results_mark_caller_overrides_in_input_provenance() -> None:
     assert result.input_provenance["single_event_viability_loss_pct"] == (
         "McRae 2024 Table 3 metadata"
     )
+
+
+def test_reproduce_table3_rejects_unsupported_threshold_overrides() -> None:
+    with pytest.raises(ValueError, match="supports only the packaged thresholds"):
+        reproduce_table3(edr_thresholds_w_m3=(1.0e6, 5.0e6, 1.0e8))
+
+
+def test_validate_table3_rejects_unsupported_threshold_overrides() -> None:
+    with pytest.raises(ValueError, match="supports only the packaged thresholds"):
+        validate_table3_against_published(edr_thresholds_w_m3=(1.0e6, 5.0e6, 1.0e8))
+
+
+def test_default_threshold_behavior_still_works() -> None:
+    result = reproduce_table3()
+
+    assert result.inputs["edr_thresholds_w_m3"] == [1.0e6, 1.0e7, 1.0e8]
+    assert result.input_provenance["edr_thresholds_w_m3"] == (
+        "McRae 2024 Table 3 metadata"
+    )
+
+
+def test_exact_default_threshold_override_is_deterministic_and_provenanced() -> None:
+    result = reproduce_table3(edr_thresholds_w_m3=(1.0e6, 1.0e7, 1.0e8))
+
+    assert result.inputs["edr_thresholds_w_m3"] == [1.0e6, 1.0e7, 1.0e8]
+    assert result.input_provenance["edr_thresholds_w_m3"] == "caller override"
 
 
 def test_validation_fails_for_unexpected_mismatch_changes() -> None:

@@ -51,10 +51,34 @@ _PATHWAY_INPUT_PROVENANCE_FIELDS: tuple[str, ...] = (
 )
 _PACKAGE_METADATA_PROVENANCE = "McRae 2024 Table 3 metadata"
 _CALLER_OVERRIDE_PROVENANCE = "caller override"
+_SUPPORTED_TABLE3_THRESHOLDS_W_M3 = tuple(
+    spec[0] for spec in _THRESHOLD_COLUMN_SPECS
+)
 
 
 def _threshold_suffix(threshold: float) -> str:
     return f"1e{int(round(math.log10(threshold)))}"
+
+
+def _normalise_supported_thresholds(raw_thresholds: Any) -> tuple[float, float, float]:
+    try:
+        thresholds = tuple(float(value) for value in raw_thresholds)
+    except TypeError as exc:
+        raise ValueError(
+            "The McRae 2024 Table 3 pathway supports only the packaged "
+            "thresholds 1e6, 1e7, and 1e8 W/m^3. For arbitrary threshold "
+            "analyses, call estimate_viability_after_events(...) with "
+            "user-supplied affected volume."
+        ) from exc
+
+    if thresholds != _SUPPORTED_TABLE3_THRESHOLDS_W_M3:
+        raise ValueError(
+            "The McRae 2024 Table 3 pathway supports only the packaged "
+            "thresholds 1e6, 1e7, and 1e8 W/m^3. For arbitrary threshold "
+            "analyses, call estimate_viability_after_events(...) with "
+            "user-supplied affected volume."
+        )
+    return thresholds
 
 
 @lru_cache
@@ -97,6 +121,10 @@ def mcrae_2024_table3_inputs() -> dict[str, Any]:
 def _resolve_inputs(inputs: dict[str, Any]) -> dict[str, Any]:
     resolved = mcrae_2024_table3_inputs()
     resolved.update(inputs)
+    if "edr_thresholds_w_m3" in inputs:
+        resolved["edr_thresholds_w_m3"] = list(
+            _normalise_supported_thresholds(inputs["edr_thresholds_w_m3"])
+        )
     resolved["figure5a_volumes"] = _copy_frame(resolved["figure5a_volumes"])
     resolved["published_table3"] = _copy_frame(resolved["published_table3"])
     resolved["inferred_radii"] = _copy_frame(resolved["inferred_radii"])
@@ -113,6 +141,29 @@ def _resolve_inputs(inputs: dict[str, Any]) -> dict[str, Any]:
 
 def _normalise_expected_mismatches() -> list[dict[str, Any]]:
     return [dict(item) for item in MCRAE_2024_TABLE3_KNOWN_RESIDUAL_MISMATCHES]
+
+
+def _extract_clipped_cells(calculated_table3: pd.DataFrame) -> list[dict[str, Any]]:
+    clipped_cells: list[dict[str, Any]] = []
+    for row in calculated_table3.to_dict(orient="records"):
+        for threshold, _affected_column, _published_column in _THRESHOLD_COLUMN_SPECS:
+            suffix = _threshold_suffix(threshold)
+            clipped_value = bool(row[f"clipped_{suffix}"])
+            if clipped_value:
+                clipped_cells.append(
+                    {
+                        "thread_radius_um": int(row["thread_radius_um"]),
+                        "edr_threshold_w_m3": threshold,
+                        "clipped": True,
+                        "final_viability_fraction": float(
+                            row[f"calc_viability_{suffix}_fraction"]
+                        ),
+                        "final_viability_pct_rounded": int(
+                            row[f"calc_viability_{suffix}_pct_rounded"]
+                        ),
+                    }
+                )
+    return clipped_cells
 
 
 def _calculate_table3_dataframe(resolved: dict[str, Any]) -> pd.DataFrame:
@@ -193,6 +244,7 @@ def _calculate_table3_dataframe(resolved: dict[str, Any]) -> pd.DataFrame:
             calculated_row[f"calc_viability_{suffix}_pct_rounded"] = int(
                 round(viability_result.final_viability * 100.0)
             )
+            calculated_row[f"clipped_{suffix}"] = bool(viability_result.warnings)
 
         calculated_rows.append(calculated_row)
 
@@ -269,6 +321,7 @@ def _validate_table3(
 
     expected_mismatches = _normalise_expected_mismatches()
     actual_mismatches = _extract_mismatch_cells(comparison)
+    clipped_cells = _extract_clipped_cells(calculated_table3)
     expected_residual_mismatches = [
         mismatch
         for mismatch in actual_mismatches
@@ -311,6 +364,11 @@ def _validate_table3(
         warnings.append("Unexpected Table 3 mismatches were detected.")
     if missing_expected_mismatches:
         warnings.append("Expected residual mismatches were not found as expected.")
+    if clipped_cells:
+        warnings.append(
+            "Some Table 3 pathway cells were clipped into the [0, 1] "
+            "viability interval."
+        )
 
     return Table3ValidationResult(
         passed=passed,
@@ -323,6 +381,7 @@ def _validate_table3(
         expected_residual_mismatches=expected_residual_mismatches,
         unexpected_mismatches=unexpected_mismatches,
         missing_expected_mismatches=missing_expected_mismatches,
+        clipped_cells=clipped_cells,
         units={
             "edr_threshold_w_m3": ENERGY_DISSIPATION_RATE_W_M3,
             "bubble_radius_m": LENGTH_M,
@@ -330,6 +389,7 @@ def _validate_table3(
             "event_count": EVENT_COUNT,
             "calc_viability_fraction": VIABILITY_FRACTION,
             "calc_viability_pct_rounded": VIABILITY_PERCENT,
+            "clipped": "boolean",
         },
         inputs={
             "edr_thresholds_w_m3": list(resolved["edr_thresholds_w_m3"]),
@@ -388,6 +448,7 @@ def estimate_table3_from_figure5a_volumes(**inputs: Any) -> Table3ReproductionRe
             "passed": validation.passed,
         },
         known_residual_mismatches=validation.expected_residual_mismatches,
+        clipped_cells=validation.clipped_cells,
         units={
             "edr_threshold_w_m3": ENERGY_DISSIPATION_RATE_W_M3,
             "affected_volume_nl": "nL",
@@ -395,6 +456,7 @@ def estimate_table3_from_figure5a_volumes(**inputs: Any) -> Table3ReproductionRe
             "event_count": EVENT_COUNT,
             "calc_viability_fraction": VIABILITY_FRACTION,
             "calc_viability_pct_rounded": VIABILITY_PERCENT,
+            "clipped": "boolean",
         },
         inputs={
             "edr_thresholds_w_m3": list(resolved["edr_thresholds_w_m3"]),

@@ -99,6 +99,7 @@ class Table3ReproductionResult:
     comparison_dataframe: Any | None = None
     validation_summary: Metadata = field(default_factory=dict)
     known_residual_mismatches: list[Metadata] = field(default_factory=list)
+    clipped_cells: list[Metadata] = field(default_factory=list)
     units: StringMap = field(default_factory=dict)
     inputs: Metadata = field(default_factory=dict)
     input_provenance: StringMap = field(default_factory=dict)
@@ -124,6 +125,7 @@ class Table3ValidationResult:
     expected_residual_mismatches: list[Metadata] = field(default_factory=list)
     unexpected_mismatches: list[Metadata] = field(default_factory=list)
     missing_expected_mismatches: list[Metadata] = field(default_factory=list)
+    clipped_cells: list[Metadata] = field(default_factory=list)
     units: StringMap = field(default_factory=dict)
     inputs: Metadata = field(default_factory=dict)
     input_provenance: StringMap = field(default_factory=dict)
