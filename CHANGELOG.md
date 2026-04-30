@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-04-30
 
 `thalmetis-edr` v0.1 prepares a bounded McRae 2024 Figure 5a / Table 3
 pathway reconstruction for research and educational reproducibility.
@@ -35,7 +35,5 @@ Explicit non-scope:
 - no unpublished 2026 hemolysis work
 - no ML or XGBoost
 - no GUI, web, server, cloud, or API dependencies
-- no PyPI release yet
-- no GitHub release yet
-- no Zenodo DOI yet
-- no `v0.1.0` tag yet
+- PyPI publication is not included in v0.1.0.
+- GitHub release and DOI metadata are tracked after publication.
