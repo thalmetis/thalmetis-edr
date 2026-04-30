@@ -1,6 +1,6 @@
 # References
 
-The primary scientific sources for this scaffold are:
+The primary scientific sources for the v0.1 release materials are:
 
 - McRae et al. 2024. Primary source for the v0.1 McRae 2024 pinch-off /
   sparging model and Table 3 reproduction.
