@@ -42,6 +42,10 @@ _THRESHOLD_COLUMN_SPECS: tuple[tuple[float, str, str], ...] = (
     (1.0e7, "affected_volume_1e7_nl", "viability_1e7_pct"),
     (1.0e8, "affected_volume_1e8_nl", "viability_1e8_pct"),
 )
+_TABLE3_KEY_COLUMNS: tuple[str, str] = (
+    "thread_radius_um",
+    "published_bubble_radius_mm",
+)
 _PATHWAY_INPUT_PROVENANCE_FIELDS: tuple[str, ...] = (
     "edr_thresholds_w_m3",
     "total_gas_volume_l",
@@ -143,6 +147,96 @@ def _normalise_expected_mismatches() -> list[dict[str, Any]]:
     return [dict(item) for item in MCRAE_2024_TABLE3_KNOWN_RESIDUAL_MISMATCHES]
 
 
+def _normalise_key(
+    thread_radius_um: Any, published_bubble_radius_mm: Any
+) -> tuple[int, float]:
+    return (int(thread_radius_um), float(published_bubble_radius_mm))
+
+
+def _key_records_from_dataframe(frame: pd.DataFrame) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for row in frame.loc[:, list(_TABLE3_KEY_COLUMNS)].to_dict(orient="records"):
+        records.append(
+            {
+                "thread_radius_um": int(row["thread_radius_um"]),
+                "published_bubble_radius_mm": float(row["published_bubble_radius_mm"]),
+            }
+        )
+    return records
+
+
+def _sorted_key_records_from_set(
+    key_set: set[tuple[int, float]],
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "thread_radius_um": thread_radius_um,
+            "published_bubble_radius_mm": published_bubble_radius_mm,
+        }
+        for thread_radius_um, published_bubble_radius_mm in sorted(key_set)
+    ]
+
+
+def _key_set(frame: pd.DataFrame) -> set[tuple[int, float]]:
+    return {
+        _normalise_key(
+            row["thread_radius_um"], row["published_bubble_radius_mm"]
+        )
+        for row in frame.loc[:, list(_TABLE3_KEY_COLUMNS)].to_dict(orient="records")
+    }
+
+
+def _duplicate_key_records(frame: pd.DataFrame) -> list[dict[str, Any]]:
+    duplicate_counts = (
+        frame.groupby(list(_TABLE3_KEY_COLUMNS), dropna=False)
+        .size()
+        .reset_index(name="duplicate_count")
+    )
+    duplicates = duplicate_counts[duplicate_counts["duplicate_count"] > 1]
+    records: list[dict[str, Any]] = []
+    for row in duplicates.to_dict(orient="records"):
+        records.append(
+            {
+                "thread_radius_um": int(row["thread_radius_um"]),
+                "published_bubble_radius_mm": float(row["published_bubble_radius_mm"]),
+                "duplicate_count": int(row["duplicate_count"]),
+            }
+        )
+    return records
+
+
+def _canonical_expected_table3_keys() -> list[dict[str, Any]]:
+    return _key_records_from_dataframe(mcrae_2024_published_table3())
+
+
+def _assess_table3_key_completeness(
+    published_table3: pd.DataFrame, calculated_table3: pd.DataFrame
+) -> dict[str, list[dict[str, Any]]]:
+    expected_key_set = {
+        _normalise_key(record["thread_radius_um"], record["published_bubble_radius_mm"])
+        for record in _canonical_expected_table3_keys()
+    }
+    published_key_set = _key_set(published_table3)
+    calculated_key_set = _key_set(calculated_table3)
+
+    return {
+        "missing_published_keys": _sorted_key_records_from_set(
+            expected_key_set - published_key_set
+        ),
+        "extra_published_keys": _sorted_key_records_from_set(
+            published_key_set - expected_key_set
+        ),
+        "duplicate_published_keys": _duplicate_key_records(published_table3),
+        "missing_calculated_keys": _sorted_key_records_from_set(
+            expected_key_set - calculated_key_set
+        ),
+        "extra_calculated_keys": _sorted_key_records_from_set(
+            calculated_key_set - expected_key_set
+        ),
+        "duplicate_calculated_keys": _duplicate_key_records(calculated_table3),
+    }
+
+
 def _extract_clipped_cells(calculated_table3: pd.DataFrame) -> list[dict[str, Any]]:
     clipped_cells: list[dict[str, Any]] = []
     for row in calculated_table3.to_dict(orient="records"):
@@ -168,19 +262,12 @@ def _extract_clipped_cells(calculated_table3: pd.DataFrame) -> list[dict[str, An
 
 def _calculate_table3_dataframe(resolved: dict[str, Any]) -> pd.DataFrame:
     figure5a_volumes = resolved["figure5a_volumes"]
-    published_table3 = resolved["published_table3"]
     inferred_radii = resolved["inferred_radii"]
 
-    merged = published_table3.merge(
-        inferred_radii,
-        on=["thread_radius_um", "published_bubble_radius_mm"],
-        how="inner",
-        validate="one_to_one",
-    ).merge(
+    merged = inferred_radii.merge(
         figure5a_volumes,
         on="thread_radius_um",
         how="inner",
-        validate="one_to_one",
     )
 
     total_gas_volume_m3 = liters_to_m3(float(resolved["total_gas_volume_l"]))
@@ -258,10 +345,9 @@ def _build_comparison_dataframe(
 ) -> pd.DataFrame:
     comparison = published_table3.merge(
         calculated_table3,
-        on=["thread_radius_um", "published_bubble_radius_mm"],
+        on=list(_TABLE3_KEY_COLUMNS),
         how="outer",
         indicator=True,
-        validate="one_to_one",
     )
     comparison = comparison.rename(columns={"_merge": "comparison_row_status"})
     for threshold, _affected_column, published_column in _THRESHOLD_COLUMN_SPECS:
@@ -325,12 +411,12 @@ def _validate_table3(
         published_table3, packaged_published
     )
 
+    key_completeness = _assess_table3_key_completeness(
+        published_table3, calculated_table3
+    )
     expected_mismatches = _normalise_expected_mismatches()
     actual_mismatches = _extract_mismatch_cells(comparison)
     clipped_cells = _extract_clipped_cells(calculated_table3)
-    unmatched_comparison_rows = comparison[
-        comparison["comparison_row_status"] != "both"
-    ]
     expected_residual_mismatches = [
         mismatch
         for mismatch in actual_mismatches
@@ -356,7 +442,12 @@ def _validate_table3(
     ]
 
     calculated_pathway_passed = (
-        unmatched_comparison_rows.empty
+        not key_completeness["missing_published_keys"]
+        and not key_completeness["extra_published_keys"]
+        and not key_completeness["duplicate_published_keys"]
+        and not key_completeness["missing_calculated_keys"]
+        and not key_completeness["extra_calculated_keys"]
+        and not key_completeness["duplicate_calculated_keys"]
         and not unexpected_mismatches
         and not missing_expected_mismatches
     )
@@ -375,7 +466,19 @@ def _validate_table3(
         warnings.append("Unexpected Table 3 mismatches were detected.")
     if missing_expected_mismatches:
         warnings.append("Expected residual mismatches were not found as expected.")
-    if not unmatched_comparison_rows.empty:
+    if key_completeness["missing_published_keys"]:
+        warnings.append("Expected published Table 3 keys were missing.")
+    if key_completeness["extra_published_keys"]:
+        warnings.append("Unexpected published Table 3 keys were present.")
+    if key_completeness["duplicate_published_keys"]:
+        warnings.append("Duplicate published Table 3 keys were detected.")
+    if key_completeness["missing_calculated_keys"]:
+        warnings.append("Expected calculated Table 3 keys were missing.")
+    if key_completeness["extra_calculated_keys"]:
+        warnings.append("Unexpected calculated Table 3 keys were present.")
+    if key_completeness["duplicate_calculated_keys"]:
+        warnings.append("Duplicate calculated Table 3 keys were detected.")
+    if comparison["comparison_row_status"].ne("both").any():
         warnings.append(
             "Table 3 comparison keys did not align exactly between the "
             "published fixture and calculated pathway rows."
@@ -397,6 +500,12 @@ def _validate_table3(
         expected_residual_mismatches=expected_residual_mismatches,
         unexpected_mismatches=unexpected_mismatches,
         missing_expected_mismatches=missing_expected_mismatches,
+        missing_published_keys=key_completeness["missing_published_keys"],
+        extra_published_keys=key_completeness["extra_published_keys"],
+        duplicate_published_keys=key_completeness["duplicate_published_keys"],
+        missing_calculated_keys=key_completeness["missing_calculated_keys"],
+        extra_calculated_keys=key_completeness["extra_calculated_keys"],
+        duplicate_calculated_keys=key_completeness["duplicate_calculated_keys"],
         clipped_cells=clipped_cells,
         units={
             "edr_threshold_w_m3": ENERGY_DISSIPATION_RATE_W_M3,

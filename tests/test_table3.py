@@ -180,6 +180,12 @@ def test_validate_table3_against_published_reports_only_expected_residual_mismat
     assert result.calculated_pathway_passed is True
     assert result.unexpected_mismatches == []
     assert result.missing_expected_mismatches == []
+    assert result.missing_published_keys == []
+    assert result.extra_published_keys == []
+    assert result.duplicate_published_keys == []
+    assert result.missing_calculated_keys == []
+    assert result.extra_calculated_keys == []
+    assert result.duplicate_calculated_keys == []
     assert result.expected_residual_mismatches == [
         {
             "thread_radius_um": 100,
@@ -285,11 +291,29 @@ def test_validation_fails_explicitly_for_unmatched_comparison_keys() -> None:
     assert result.calculated_pathway_passed is False
     assert result.unexpected_mismatches == []
     assert result.missing_expected_mismatches == []
+    assert result.missing_published_keys == [
+        {
+            "thread_radius_um": 50,
+            "published_bubble_radius_mm": pytest.approx(0.56),
+        }
+    ]
+    assert result.extra_published_keys == [
+        {
+            "thread_radius_um": 50,
+            "published_bubble_radius_mm": pytest.approx(0.57),
+        }
+    ]
+    assert result.missing_calculated_keys == []
+    assert result.extra_calculated_keys == []
     comparison_rows = result.comparison_dataframe.loc[
         result.comparison_dataframe["thread_radius_um"] == 50,
         ["published_bubble_radius_mm", "comparison_row_status"],
     ]
     assert comparison_rows.to_dict(orient="records") == [
+        {
+            "published_bubble_radius_mm": pytest.approx(0.56),
+            "comparison_row_status": "right_only",
+        },
         {
             "published_bubble_radius_mm": pytest.approx(0.57),
             "comparison_row_status": "left_only",
@@ -299,3 +323,113 @@ def test_validation_fails_explicitly_for_unmatched_comparison_keys() -> None:
         "Table 3 comparison keys did not align exactly between the published "
         "fixture and calculated pathway rows."
     ) in result.warnings
+
+
+def test_validation_fails_when_published_fixture_is_missing_expected_key() -> None:
+    published = mcrae_2024_published_table3()
+    published = published[published["thread_radius_um"] != 50].reset_index(drop=True)
+
+    result = validate_table3_against_published(published_table3=published)
+
+    assert result.passed is False
+    assert result.published_fixture_integrity_passed is False
+    assert result.calculated_pathway_passed is False
+    assert result.missing_published_keys == [
+        {
+            "thread_radius_um": 50,
+            "published_bubble_radius_mm": pytest.approx(0.56),
+        }
+    ]
+    assert result.extra_published_keys == []
+    assert result.missing_calculated_keys == []
+    assert result.extra_calculated_keys == []
+    comparison_rows = result.comparison_dataframe.loc[
+        result.comparison_dataframe["thread_radius_um"] == 50,
+        ["published_bubble_radius_mm", "comparison_row_status"],
+    ]
+    assert comparison_rows.to_dict(orient="records") == [
+        {
+            "published_bubble_radius_mm": pytest.approx(0.56),
+            "comparison_row_status": "right_only",
+        }
+    ]
+
+
+def test_validation_fails_when_calculated_pathway_is_missing_expected_key() -> None:
+    inferred_radii = mcrae_2024_table3_inputs()["inferred_radii"]
+    inferred_radii = inferred_radii[
+        inferred_radii["thread_radius_um"] != 50
+    ].reset_index(drop=True)
+
+    result = validate_table3_against_published(inferred_radii=inferred_radii)
+
+    assert result.passed is False
+    assert result.published_fixture_integrity_passed is True
+    assert result.calculated_pathway_passed is False
+    assert result.missing_published_keys == []
+    assert result.extra_published_keys == []
+    assert result.missing_calculated_keys == [
+        {
+            "thread_radius_um": 50,
+            "published_bubble_radius_mm": pytest.approx(0.56),
+        }
+    ]
+    assert result.extra_calculated_keys == []
+    comparison_rows = result.comparison_dataframe.loc[
+        result.comparison_dataframe["thread_radius_um"] == 50,
+        ["published_bubble_radius_mm", "comparison_row_status"],
+    ]
+    assert comparison_rows.to_dict(orient="records") == [
+        {
+            "published_bubble_radius_mm": pytest.approx(0.56),
+            "comparison_row_status": "left_only",
+        }
+    ]
+
+
+def test_validation_fails_when_both_sides_are_missing_same_expected_key() -> None:
+    published = mcrae_2024_published_table3()
+    published = published[published["thread_radius_um"] != 50].reset_index(drop=True)
+    inferred_radii = mcrae_2024_table3_inputs()["inferred_radii"]
+    inferred_radii = inferred_radii[
+        inferred_radii["thread_radius_um"] != 50
+    ].reset_index(drop=True)
+
+    result = validate_table3_against_published(
+        published_table3=published,
+        inferred_radii=inferred_radii,
+    )
+
+    assert result.passed is False
+    assert result.published_fixture_integrity_passed is False
+    assert result.calculated_pathway_passed is False
+    expected_key = {
+        "thread_radius_um": 50,
+        "published_bubble_radius_mm": pytest.approx(0.56),
+    }
+    assert result.missing_published_keys == [expected_key]
+    assert result.missing_calculated_keys == [expected_key]
+    assert result.comparison_dataframe[
+        result.comparison_dataframe["thread_radius_um"] == 50
+    ].empty
+
+
+def test_validation_fails_clearly_for_duplicate_published_key() -> None:
+    published = mcrae_2024_published_table3()
+    duplicate_row = published.loc[published["thread_radius_um"] == 50]
+    published = pd.concat([published, duplicate_row], ignore_index=True)
+
+    result = validate_table3_against_published(published_table3=published)
+
+    assert result.passed is False
+    assert result.published_fixture_integrity_passed is False
+    assert result.calculated_pathway_passed is False
+    assert result.duplicate_published_keys == [
+        {
+            "thread_radius_um": 50,
+            "published_bubble_radius_mm": pytest.approx(0.56),
+            "duplicate_count": 2,
+        }
+    ]
+    assert result.missing_published_keys == []
+    assert result.extra_published_keys == []
