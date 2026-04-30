@@ -1,17 +1,22 @@
-"""Placeholder for future McRae et al. 2024 Table 3 sensitivity examples.
+"""Minimal example for the bounded McRae et al. 2024 Table 3 pathway."""
 
-This file intentionally contains no executable scientific equations in v0.1.
-"""
-
-from thalmetis_edr import mcrae_2024_table3_inputs, reproduce_table3
+from thalmetis_edr import reproduce_table3
 
 
 def main() -> None:
-    """Show the intended import path for future Table 3 work."""
-    inputs = mcrae_2024_table3_inputs()
-    _ = inputs
-    # TODO: call reproduce_table3(...) after published equations are implemented.
-    _ = reproduce_table3
+    """Show the structured Table 3 pathway result shape."""
+    result = reproduce_table3()
+    print(result.validation_summary)
+    print(
+        result.calculated_dataframe[
+            [
+                "thread_radius_um",
+                "calc_viability_1e6_pct_rounded",
+                "calc_viability_1e7_pct_rounded",
+                "calc_viability_1e8_pct_rounded",
+            ]
+        ]
+    )
 
 
 if __name__ == "__main__":

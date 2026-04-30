@@ -11,24 +11,24 @@ from thalmetis_edr.results import AffectedVolumeResult
 
 def affected_volume_from_threshold(
     *,
-    threshold_edr_w_kg: float | None = None,
+    threshold_edr_w_m3: float | None = None,
     source: str = MCRAE_2024_EQ_2,
     **inputs: Any,
 ) -> AffectedVolumeResult:
     """Scaffold McRae 2024 pinch-off affected-volume calculation.
 
-    The v0.1 scaffold exposes the result shape and source metadata only. The
-    published equation is intentionally not implemented in this scaffold PR.
+    The v0.1 package exposes the result shape and source metadata only. The
+    published equation is intentionally not implemented in this PR.
     """
     raise NotImplementedError(
         "McRae et al. 2024 affected-volume equations are out of scope for the "
-        "v0.1 scaffold PR."
+        "bounded v0.1 implementation."
     )
 
 
 def walls_2017_rupture_affected_volume(
     *,
-    threshold_edr_w_kg: float | None = None,
+    threshold_edr_w_m3: float | None = None,
     source: str = WALLS_2017_AFFECTED_VOLUME_CONTEXT,
     **inputs: Any,
 ) -> AffectedVolumeResult:

@@ -1,4 +1,4 @@
-"""Public API for the thalmetis-edr v0.1 scaffold."""
+"""Public API for the bounded thalmetis-edr v0.1 package."""
 
 from thalmetis_edr.affected_volume import (
     affected_volume_from_threshold,
@@ -16,6 +16,9 @@ from thalmetis_edr.results import (
     ViabilitySensitivityResult,
 )
 from thalmetis_edr.tables import (
+    estimate_table3_from_figure5a_volumes,
+    mcrae_2024_figure5a_volumes,
+    mcrae_2024_published_table3,
     mcrae_2024_table3_inputs,
     reproduce_table3,
     validate_table3_against_published,
@@ -38,8 +41,11 @@ __all__ = [
     "ViabilitySensitivityResult",
     "affected_volume_from_threshold",
     "bubble_volume",
+    "estimate_table3_from_figure5a_volumes",
     "estimate_viability_after_events",
     "event_count_from_gas_volume",
+    "mcrae_2024_figure5a_volumes",
+    "mcrae_2024_published_table3",
     "mcrae_2024_table3_inputs",
     "reproduce_table3",
     "validate_table3_against_published",

@@ -1,1 +1,1 @@
-"""Published-source metadata used by the thalmetis-edr scaffold."""
+"""Published-source metadata used by thalmetis-edr."""

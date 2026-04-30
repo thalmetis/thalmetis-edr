@@ -36,4 +36,8 @@ def test_named_payload_fields_exist() -> None:
     assert hasattr(ViabilityEstimate(), "final_viability")
     assert hasattr(ViabilitySensitivityResult(), "dataframe")
     assert hasattr(Table3ReproductionResult(), "dataframe")
+    assert hasattr(Table3ReproductionResult(), "calculated_dataframe")
+    assert hasattr(Table3ReproductionResult(), "clipped_cells")
     assert hasattr(Table3ValidationResult(), "passed")
+    assert hasattr(Table3ValidationResult(), "expected_residual_mismatches")
+    assert hasattr(Table3ValidationResult(), "clipped_cells")

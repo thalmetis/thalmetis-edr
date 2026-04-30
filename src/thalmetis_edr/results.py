@@ -94,6 +94,12 @@ class Table3ReproductionResult:
     """McRae et al. 2024 Table 3 reproduction result."""
 
     dataframe: Any | None = None
+    published_dataframe: Any | None = None
+    calculated_dataframe: Any | None = None
+    comparison_dataframe: Any | None = None
+    validation_summary: Metadata = field(default_factory=dict)
+    known_residual_mismatches: list[Metadata] = field(default_factory=list)
+    clipped_cells: list[Metadata] = field(default_factory=list)
     units: StringMap = field(default_factory=dict)
     inputs: Metadata = field(default_factory=dict)
     input_provenance: StringMap = field(default_factory=dict)
@@ -111,6 +117,21 @@ class Table3ValidationResult:
 
     passed: bool = False
     dataframe: Any | None = None
+    published_dataframe: Any | None = None
+    calculated_dataframe: Any | None = None
+    comparison_dataframe: Any | None = None
+    published_fixture_integrity_passed: bool = False
+    calculated_pathway_passed: bool = False
+    expected_residual_mismatches: list[Metadata] = field(default_factory=list)
+    unexpected_mismatches: list[Metadata] = field(default_factory=list)
+    missing_expected_mismatches: list[Metadata] = field(default_factory=list)
+    missing_published_keys: list[Metadata] = field(default_factory=list)
+    extra_published_keys: list[Metadata] = field(default_factory=list)
+    duplicate_published_keys: list[Metadata] = field(default_factory=list)
+    missing_calculated_keys: list[Metadata] = field(default_factory=list)
+    extra_calculated_keys: list[Metadata] = field(default_factory=list)
+    duplicate_calculated_keys: list[Metadata] = field(default_factory=list)
+    clipped_cells: list[Metadata] = field(default_factory=list)
     units: StringMap = field(default_factory=dict)
     inputs: Metadata = field(default_factory=dict)
     input_provenance: StringMap = field(default_factory=dict)

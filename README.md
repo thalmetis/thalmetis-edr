@@ -5,7 +5,9 @@ published affected-volume and pinch-off viability calculations. It is intended
 for research and educational use as a reproducibility and sensitivity-analysis
 tool.
 
-The v0.1 package scaffold is built to reproduce McRae et al. 2024 Table 3.
+The v0.1 package reconstructs the McRae et al. 2024 Table 3 pathway from
+Figure 5a-derived affected volumes and inferred calculator `R_b` values, with
+two documented residual mismatch cells.
 The first-class v0.1 packaged viability model is McRae et al. 2024 pinch-off / Table 3 only.
 
 Walls et al. 2017 affected-volume-only context supports the affected-volume
@@ -34,10 +36,10 @@ interfaces while keeping the scientific assumptions visible.
 
 ## Generic Equation 3 Helper
 
-`estimate_viability_after_events(...)` is scaffolded as a generic McRae et al.
-2024 Equation 3 helper that accepts user-supplied affected volume, event count,
-and cell-response parameters. The first-class packaged v0.1 viability use is
-McRae 2024 pinch-off / Table 3 only.
+`estimate_viability_after_events(...)` is a bounded McRae et al. 2024 Equation
+3 helper that accepts user-supplied affected volume, event count, and
+cell-response parameters. The first-class packaged v0.1 viability use is McRae
+2024 pinch-off / Table 3 only.
 
 Use outside the McRae 2024 pinch-off context is a user-composed exploratory
 calculation. It is not a universal viability predictor.
@@ -69,7 +71,7 @@ Install development dependencies in an environment of your choice:
 python -m pip install -e .[dev]
 ```
 
-Run the scaffold checks:
+Run the package checks:
 
 ```powershell
 python -m pytest
