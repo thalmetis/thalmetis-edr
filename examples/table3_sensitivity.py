@@ -6,7 +6,9 @@ from thalmetis_edr import reproduce_table3
 def main() -> None:
     """Show the structured Table 3 pathway result shape."""
     result = reproduce_table3()
+    print("Validation summary:")
     print(result.validation_summary)
+    print("\nCalculated Table 3 pathway viability columns:")
     print(
         result.calculated_dataframe[
             [

@@ -2,9 +2,14 @@
 
 The first-class v0.1 packaged viability model is McRae et al. 2024 pinch-off / Table 3 only.
 
-`thalmetis-edr` v0.1 is a scaffold for published affected-volume and pinch-off
-viability calculations. It is for research and educational reproducibility and
-sensitivity analysis.
+`thalmetis-edr` v0.1 implements the bounded McRae 2024 Figure 5a / Table 3
+pathway from Figure 5a-derived affected volumes and inferred calculator `R_b`
+values. It is for research and educational reproducibility and sensitivity
+analysis.
+
+McRae 2024 Equation 2 remains a published analytical scaling reference in
+v0.1. It is intentionally deferred and is not the operational Table 3 pathway
+in this package.
 
 Walls et al. 2017 affected-volume-only support is limited to framing and, in a
 future release, possible affected-volume-only helpers if they can be
@@ -12,7 +17,8 @@ implemented directly from published equations, data, or figures.
 
 v0.1 has no rupture viability model. v0.1 has no combined pinch-off + rupture
 viability model. Generic Equation 3 use outside McRae 2024 pinch-off is a
-user-composed exploratory calculation, not a packaged validated model.
+user-composed exploratory calculation, not a packaged validated industrial
+viability predictor or process decision tool.
 
 Public high-level calculation functions are designed to return structured
 result objects with computed values, units, inputs, input provenance, source
@@ -33,4 +39,5 @@ customer workflow. Any future GUI should live in a separate repository such as
 - no CFD solver
 - no ML or XGBoost model
 - no GMP or process-control claim
+- no validated industrial viability prediction
 - no commercial product workflow
