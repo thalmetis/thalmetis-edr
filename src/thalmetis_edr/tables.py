@@ -259,21 +259,27 @@ def _build_comparison_dataframe(
     comparison = published_table3.merge(
         calculated_table3,
         on=["thread_radius_um", "published_bubble_radius_mm"],
-        how="inner",
+        how="outer",
+        indicator=True,
         validate="one_to_one",
     )
+    comparison = comparison.rename(columns={"_merge": "comparison_row_status"})
     for threshold, _affected_column, published_column in _THRESHOLD_COLUMN_SPECS:
         suffix = _threshold_suffix(threshold)
         comparison[f"viability_delta_{suffix}_pct_points"] = (
             comparison[f"calc_viability_{suffix}_pct_rounded"]
             - comparison[published_column]
         )
-    return comparison.sort_values("thread_radius_um").reset_index(drop=True)
+    return comparison.sort_values(
+        ["thread_radius_um", "published_bubble_radius_mm"]
+    ).reset_index(drop=True)
 
 
 def _extract_mismatch_cells(comparison: pd.DataFrame) -> list[dict[str, Any]]:
     mismatches: list[dict[str, Any]] = []
     for row in comparison.to_dict(orient="records"):
+        if row.get("comparison_row_status") != "both":
+            continue
         for threshold, _affected_column, published_column in _THRESHOLD_COLUMN_SPECS:
             suffix = _threshold_suffix(threshold)
             calculated_value = int(row[f"calc_viability_{suffix}_pct_rounded"])
@@ -322,6 +328,9 @@ def _validate_table3(
     expected_mismatches = _normalise_expected_mismatches()
     actual_mismatches = _extract_mismatch_cells(comparison)
     clipped_cells = _extract_clipped_cells(calculated_table3)
+    unmatched_comparison_rows = comparison[
+        comparison["comparison_row_status"] != "both"
+    ]
     expected_residual_mismatches = [
         mismatch
         for mismatch in actual_mismatches
@@ -347,7 +356,9 @@ def _validate_table3(
     ]
 
     calculated_pathway_passed = (
-        not unexpected_mismatches and not missing_expected_mismatches
+        unmatched_comparison_rows.empty
+        and not unexpected_mismatches
+        and not missing_expected_mismatches
     )
     passed = published_fixture_integrity_passed and calculated_pathway_passed
 
@@ -364,6 +375,11 @@ def _validate_table3(
         warnings.append("Unexpected Table 3 mismatches were detected.")
     if missing_expected_mismatches:
         warnings.append("Expected residual mismatches were not found as expected.")
+    if not unmatched_comparison_rows.empty:
+        warnings.append(
+            "Table 3 comparison keys did not align exactly between the "
+            "published fixture and calculated pathway rows."
+        )
     if clipped_cells:
         warnings.append(
             "Some Table 3 pathway cells were clipped into the [0, 1] "

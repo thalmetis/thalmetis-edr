@@ -270,3 +270,32 @@ def test_validation_fails_for_unexpected_mismatch_changes() -> None:
             "published_viability_pct": 93,
         }
     ]
+
+
+def test_validation_fails_explicitly_for_unmatched_comparison_keys() -> None:
+    published = mcrae_2024_published_table3()
+    published.loc[
+        published["thread_radius_um"] == 50, "published_bubble_radius_mm"
+    ] = 0.57
+
+    result = validate_table3_against_published(published_table3=published)
+
+    assert result.passed is False
+    assert result.published_fixture_integrity_passed is False
+    assert result.calculated_pathway_passed is False
+    assert result.unexpected_mismatches == []
+    assert result.missing_expected_mismatches == []
+    comparison_rows = result.comparison_dataframe.loc[
+        result.comparison_dataframe["thread_radius_um"] == 50,
+        ["published_bubble_radius_mm", "comparison_row_status"],
+    ]
+    assert comparison_rows.to_dict(orient="records") == [
+        {
+            "published_bubble_radius_mm": pytest.approx(0.57),
+            "comparison_row_status": "left_only",
+        },
+    ]
+    assert (
+        "Table 3 comparison keys did not align exactly between the published "
+        "fixture and calculated pathway rows."
+    ) in result.warnings
