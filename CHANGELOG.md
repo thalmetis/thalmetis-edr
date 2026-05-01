@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 - 2026-05-01
+
 - Add a bounded McRae 2024 pinch-off viability sensitivity estimate that
   composes Figure 5a affected-volume interpolation, optional inferred Table 3
   calculator R_b, gas-exposure normalization, spherical bubble-volume/event-count

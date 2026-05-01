@@ -51,34 +51,56 @@ def test_no_prohibited_ui_or_web_dependencies() -> None:
 
 
 def test_readme_and_docs_contain_required_boundaries() -> None:
-    combined_text = "\n".join(
-        [
-            (ROOT / "README.md").read_text(encoding="utf-8"),
-            (ROOT / "docs" / "model-boundaries.md").read_text(encoding="utf-8"),
-            (ROOT / "docs" / "future-event-history.md").read_text(
-                encoding="utf-8"
-            ),
-        ]
+    combined_text = " ".join(
+        "\n".join(
+            [
+                (ROOT / "README.md").read_text(encoding="utf-8"),
+                (ROOT / "docs" / "model-boundaries.md").read_text(encoding="utf-8"),
+                (ROOT / "docs" / "future-event-history.md").read_text(encoding="utf-8"),
+                (ROOT / "docs" / "pinchoff-viability-estimate.md").read_text(
+                    encoding="utf-8"
+                ),
+                (ROOT / "docs" / "v0.2-release-readiness.md").read_text(
+                    encoding="utf-8"
+                ),
+            ]
+        ).split()
     )
 
     required_phrases = [
-        "first-class v0.1 packaged viability model is McRae et al. 2024 "
-        "pinch-off / Table 3 only",
+        "v0.1 reconstructed the bounded McRae 2024 Figure 5a/Table 3 pathway",
+        "v0.2 adds bounded interpolation and user-defined pinch-off "
+        "sensitivity estimates",
         "Walls et al. 2017 affected-volume-only",
+        "bounded sensitivity estimate",
+        "not a validated industrial viability predictor",
+        "not the main commercial Thalmetis transfer-readiness product",
+        "process control, GMP release, transfer approval, process approval, "
+        "or batch release",
+        "Users supply EDR threshold and single-event viability-loss assumptions",
+        "inferred Table 3 `R_b` as calculator values",
+        "no extrapolation",
         "no rupture viability model",
         "no combined pinch-off + rupture viability model",
-        "user-composed exploratory calculation",
+        "no coalescence model",
+        "no path-independence or path-history model",
+        "no Track A transfer-readiness integration",
     ]
 
     for phrase in required_phrases:
         assert phrase in combined_text
 
 
-def test_citation_has_real_v010_zenodo_doi() -> None:
+def test_citation_is_prepared_for_v020_without_invented_doi() -> None:
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
+    readiness = (ROOT / "docs" / "v0.2-release-readiness.md").read_text(
+        encoding="utf-8"
+    )
 
     assert "title: thalmetis-edr" in citation
     assert "given-names: Oliver" in citation
-    assert "version: 0.1.0" in citation
-    assert "doi: 10.5281/zenodo.19932774" in citation
+    assert "version: 0.2.0" in citation
+    assert "doi: 10.5281/zenodo.19932774" not in citation
+    assert "post-release DOI metadata PR" in readiness
+    assert "minted v0.2 DOI" in readiness
     assert "Zenodo DOI will be added after the first GitHub release" not in citation

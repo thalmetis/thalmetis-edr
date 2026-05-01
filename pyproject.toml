@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "thalmetis-edr"
-version = "0.1.0"
-description = "Bounded McRae 2024 Figure 5a and Table 3 pathway reconstruction."
+version = "0.2.0"
+description = "Bounded McRae 2024 Figure 5a/Table 3 reconstruction, interpolation, and pinch-off sensitivity estimates."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

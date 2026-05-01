@@ -1,43 +1,47 @@
 # Model Boundaries
 
-The first-class v0.1 packaged viability model is McRae et al. 2024 pinch-off / Table 3 only.
+`thalmetis-edr` is Track B open scientific hydrodynamic methodology tooling for
+research and educational use. It is not the main commercial Thalmetis
+transfer-readiness product.
 
-`thalmetis-edr` v0.1 implements the bounded McRae 2024 Figure 5a / Table 3
-pathway from Figure 5a-derived affected volumes and inferred calculator `R_b`
-values. It is for research and educational reproducibility and sensitivity
-analysis.
+v0.1 implemented the fixed bounded McRae 2024 Figure 5a / Table 3
+reconstruction from Figure 5a-derived affected volumes and inferred calculator
+`R_b` values.
 
-McRae 2024 Equation 2 remains a published analytical scaling reference in
-v0.1. It is intentionally deferred and is not the operational Table 3 pathway
-in this package.
+v0.2 adds bounded interpolation and pinch-off sensitivity estimation within the
+packaged Figure 5a / Table 3 domains:
 
-Walls et al. 2017 affected-volume-only support is limited to framing and, in a
-future release, possible affected-volume-only helpers if they can be
-implemented directly from published equations, data, or figures.
+- Figure 5a interpolation is affected-volume interpolation only.
+- Table 3 `R_b` interpolation uses inferred calculator radii from the v0.1
+  reconciliation, not measured bubble-size data.
+- Pinch-off viability is a bounded sensitivity estimate only.
 
-v0.1 has no rupture viability model. v0.1 has no combined pinch-off + rupture
-viability model. Generic Equation 3 use outside McRae 2024 pinch-off is a
-user-composed exploratory calculation, not a packaged validated industrial
-viability predictor or process decision tool.
+Users supply EDR threshold and single-event viability-loss assumptions. The
+package does not infer cell-line thresholds.
+
+McRae 2024 Equation 2 remains a published analytical scaling reference. It is
+not implemented as an operational model in this package.
 
 Public high-level calculation functions are designed to return structured
 result objects with computed values, units, inputs, input provenance, source
 equations or tables, assumptions, notes, and warnings.
 
-v0.1 does not include a GUI, web app, dashboard, API server, cloud workflow, or
-customer workflow. Any future GUI should live in a separate repository such as
-`thalmetis-edr-ui` and depend on this core package.
-
 ## Explicit Exclusions
 
+- no validated industrial viability prediction
+- no process control, GMP release, transfer approval, process approval, or
+  batch release
+- no Track A transfer-readiness integration
+- no Equation 2 operational model
+- no extrapolation outside packaged interpolation domains
+- no automatic cell-line threshold lookup
 - no rupture viability model
 - no combined pinch-off + rupture viability model
 - no coalescence model
-- no path-independence model
+- no path-independence or path-history model
 - no event-history viability implementation
 - no thesis Table 4.4 implementation
-- no CFD solver
+- no CFD solver or local-stress-field workflow
+- no sparger optimizer
 - no ML or XGBoost model
-- no GMP or process-control claim
-- no validated industrial viability prediction
-- no commercial product workflow
+- no GUI, web app, dashboard, API server, cloud workflow, or customer workflow
