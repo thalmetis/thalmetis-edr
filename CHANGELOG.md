@@ -36,4 +36,7 @@ Explicit non-scope:
 - no ML or XGBoost
 - no GUI, web, server, cloud, or API dependencies
 - PyPI publication is not included in v0.1.0.
-- GitHub release and DOI metadata are tracked after publication.
+
+Archive:
+
+- Archived on Zenodo: https://doi.org/10.5281/zenodo.19932774
