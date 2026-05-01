@@ -58,6 +58,35 @@ class PinchoffAffectedVolumeEstimate:
     warnings: tuple[str, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class Table3BubbleRadiusInterpolationMetadata:
+    """Interpolation metadata for inferred Table 3 calculator bubble radii."""
+
+    method: str
+    source_table: str
+    source_column: str
+    input_thread_radius_um: float
+    bracketing_thread_radius_um: tuple[float, float]
+    exact_grid_point: bool
+    interpolation_space: str
+    domain_min_thread_radius_um: float
+    domain_max_thread_radius_um: float
+    extrapolated: bool
+    warnings: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class Table3BubbleRadiusEstimate:
+    """Interpolated inferred Table 3 calculator bubble-radius estimate."""
+
+    bubble_radius_mm: float
+    bubble_radius_m: float
+    thread_radius_um: float
+    metadata: Table3BubbleRadiusInterpolationMetadata
+    assumptions: tuple[str, ...]
+    warnings: tuple[str, ...]
+
+
 @dataclass(slots=True)
 class BubbleVolumeResult:
     """Bubble-volume result with source and provenance metadata."""
