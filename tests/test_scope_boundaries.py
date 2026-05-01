@@ -91,8 +91,9 @@ def test_readme_and_docs_contain_required_boundaries() -> None:
         assert phrase in combined_text
 
 
-def test_citation_is_prepared_for_v020_without_invented_doi() -> None:
+def test_citation_records_v020_doi_metadata() -> None:
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
     readiness = (ROOT / "docs" / "v0.2-release-readiness.md").read_text(
         encoding="utf-8"
     )
@@ -100,7 +101,14 @@ def test_citation_is_prepared_for_v020_without_invented_doi() -> None:
     assert "title: thalmetis-edr" in citation
     assert "given-names: Oliver" in citation
     assert "version: 0.2.0" in citation
+    assert "doi: 10.5281/zenodo.19961963" in citation
+    assert "10.5281/zenodo.19961963" in readme
+    assert "10.5281/zenodo.19932773" in readme
+    assert "McRae, O. (2026). thalmetis-edr (v0.2.0). Zenodo." in readme
     assert "doi: 10.5281/zenodo.19932774" not in citation
+    assert "This is a v0.1.0 archive note" in readme
+    assert "not presented as the current v0.2.0 package citation" in readme
     assert "post-release DOI metadata PR" in readiness
-    assert "minted v0.2 DOI" in readiness
+    assert "v0.2.0 Zenodo DOI: `10.5281/zenodo.19961963`" in readiness
+    assert "all-versions / concept DOI: `10.5281/zenodo.19932773`" in readiness
     assert "Zenodo DOI will be added after the first GitHub release" not in citation

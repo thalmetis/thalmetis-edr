@@ -179,14 +179,19 @@ can be implemented directly from published equations, data, or figures.
 
 ## Citation
 
-Until a v0.2.0 Zenodo DOI metadata PR is merged, cite the package repository
-and the relevant scientific papers in `docs/references.md`.
+For v0.2.0, cite:
+
+McRae, O. (2026). thalmetis-edr (v0.2.0). Zenodo.
+https://doi.org/10.5281/zenodo.19961963
+
+For the evolving package across all versions, use the concept DOI:
+https://doi.org/10.5281/zenodo.19932773
 
 The v0.1.0 archive DOI is
 https://doi.org/10.5281/zenodo.19932774. This is a v0.1.0 archive note and is
-not presented as a v0.2.0 DOI. After the v0.2.0 GitHub release and Zenodo
-archive are created, citation metadata should be updated in a follow-up PR with
-the minted v0.2 DOI.
+not presented as the current v0.2.0 package citation.
+
+Also cite the relevant scientific papers in `docs/references.md`.
 
 ## Development
 
