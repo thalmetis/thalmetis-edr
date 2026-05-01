@@ -8,12 +8,14 @@ from thalmetis_edr.affected_volume import (
 from thalmetis_edr.bubble_radius import interpolate_table3_bubble_radius
 from thalmetis_edr.bubbles import bubble_volume, event_count_from_gas_volume
 from thalmetis_edr.exposure import EventContribution, ExposureHistory, ThresholdExposure
+from thalmetis_edr.pinchoff import estimate_pinchoff_viability
 from thalmetis_edr.results import (
     AffectedVolumeResult,
     BubbleVolumeResult,
     EventCountResult,
     InterpolationMetadata,
     PinchoffAffectedVolumeEstimate,
+    PinchoffViabilityEstimate,
     Table3BubbleRadiusEstimate,
     Table3BubbleRadiusInterpolationMetadata,
     Table3ReproductionResult,
@@ -42,6 +44,7 @@ __all__ = [
     "ExposureHistory",
     "InterpolationMetadata",
     "PinchoffAffectedVolumeEstimate",
+    "PinchoffViabilityEstimate",
     "Table3BubbleRadiusEstimate",
     "Table3BubbleRadiusInterpolationMetadata",
     "Table3ReproductionResult",
@@ -51,6 +54,7 @@ __all__ = [
     "ViabilitySensitivityResult",
     "affected_volume_from_threshold",
     "bubble_volume",
+    "estimate_pinchoff_viability",
     "estimate_table3_from_figure5a_volumes",
     "estimate_viability_after_events",
     "event_count_from_gas_volume",

@@ -87,6 +87,48 @@ class Table3BubbleRadiusEstimate:
     warnings: tuple[str, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class PinchoffViabilityEstimate:
+    """Bounded McRae 2024 pinch-off viability sensitivity estimate."""
+
+    final_viability_pct: float
+    raw_final_viability_pct: float
+    clipped: bool
+
+    initial_viability_pct: float
+    single_event_viability_loss_pct: float
+
+    thread_radius_um: float
+    edr_threshold_w_m3: float
+
+    affected_volume_nl: float
+    affected_volume_m3: float
+
+    bubble_radius_mm: float
+    bubble_radius_m: float
+    bubble_radius_source: str
+
+    bubble_volume_m3: float
+
+    gas_exposure_mode: str
+    total_gas_volume_l: float
+    total_gas_volume_m3: float
+    gas_flow_rate_l_min: float | None
+    exposure_duration_h: float | None
+    vvm: float | None
+
+    system_volume_l: float
+    system_volume_m3: float
+    event_count: float
+
+    affected_volume_metadata: InterpolationMetadata
+    bubble_radius_metadata: Table3BubbleRadiusInterpolationMetadata | None
+
+    assumptions: tuple[str, ...]
+    warnings: tuple[str, ...]
+    source_provenance: tuple[str, ...]
+
+
 @dataclass(slots=True)
 class BubbleVolumeResult:
     """Bubble-volume result with source and provenance metadata."""
