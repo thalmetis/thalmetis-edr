@@ -4,6 +4,7 @@ from typing import get_type_hints
 import pytest
 
 import thalmetis_edr
+from thalmetis_edr.bubble_radius import interpolate_table3_bubble_radius
 from thalmetis_edr.pinchoff import estimate_pinchoff_viability
 from thalmetis_edr.results import PinchoffViabilityEstimate
 from thalmetis_edr.units import liters_to_m3, mm_to_m
@@ -76,9 +77,10 @@ def test_inferred_table3_bubble_radius_is_used_only_when_user_radius_is_absent()
     None
 ):
     result = _estimate(bubble_radius_mm=None)
+    expected = interpolate_table3_bubble_radius(100.0)
 
     assert result.bubble_radius_source == "inferred_table3_interpolation"
-    assert result.bubble_radius_mm == pytest.approx(1.002721)
+    assert result.bubble_radius_mm == pytest.approx(expected.bubble_radius_mm)
     assert result.bubble_radius_metadata is not None
 
 
@@ -314,6 +316,16 @@ def test_result_warnings_include_bounded_sensitivity_scope_terms() -> None:
     assert "No automatic cell-line threshold" in warning_text
     assert "Figure 5a" in assumption_text
     assert "No rupture" in assumption_text
+
+
+def test_inferred_bubble_radius_warnings_include_source_boundary_terms() -> None:
+    result = _estimate(bubble_radius_mm=None)
+    warning_text = " ".join(result.warnings)
+
+    assert "Table 3" in warning_text
+    assert "not measured" in warning_text
+    assert "No extrapolation" in warning_text
+    assert "not a general sparger bubble-size predictor" in warning_text
 
 
 def test_source_provenance_distinguishes_user_and_inferred_bubble_radius() -> None:

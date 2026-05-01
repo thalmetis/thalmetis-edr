@@ -8,7 +8,10 @@ from thalmetis_edr.affected_volume import interpolate_pinchoff_affected_volume
 from thalmetis_edr.bubble_radius import interpolate_table3_bubble_radius
 from thalmetis_edr.bubbles import bubble_volume, event_count_from_gas_volume
 from thalmetis_edr.published.mcrae_2024 import MCRAE_2024_EQ_3
-from thalmetis_edr.results import PinchoffViabilityEstimate
+from thalmetis_edr.results import (
+    PinchoffViabilityEstimate,
+    Table3BubbleRadiusInterpolationMetadata,
+)
 from thalmetis_edr.units import liters_to_m3, mm_to_m
 
 _BUBBLE_RADIUS_SOURCE_USER = "user_supplied"
@@ -96,6 +99,10 @@ def _ensure_percent(value: float, name: str) -> float:
     return numeric_value
 
 
+def _deduplicate_strings(values: tuple[str, ...]) -> tuple[str, ...]:
+    return tuple(dict.fromkeys(values))
+
+
 def _resolve_gas_exposure(
     *,
     total_gas_volume_l: float | None,
@@ -158,7 +165,15 @@ def _resolve_bubble_radius(
     bubble_radius_mm: float | None,
     thread_radius_um: float,
     use_inferred_bubble_radius: bool,
-) -> tuple[float, float, str, object | None, tuple[str, ...], tuple[str, ...]]:
+) -> tuple[
+    float,
+    float,
+    str,
+    Table3BubbleRadiusInterpolationMetadata | None,
+    tuple[str, ...],
+    tuple[str, ...],
+    tuple[str, ...],
+]:
     if bubble_radius_mm is not None:
         radius_mm = _ensure_finite_positive(bubble_radius_mm, "bubble_radius_mm")
         return (
@@ -168,6 +183,7 @@ def _resolve_bubble_radius(
             None,
             (_USER_BUBBLE_RADIUS_ASSUMPTION,),
             ("caller-supplied bubble radius",),
+            (),
         )
 
     if not use_inferred_bubble_radius:
@@ -183,6 +199,7 @@ def _resolve_bubble_radius(
         estimate.metadata,
         (*estimate.assumptions, _INFERRED_BUBBLE_RADIUS_ASSUMPTION),
         ("McRae et al. 2024 Table 3 inferred calculator R_b interpolation",),
+        _deduplicate_strings((*estimate.warnings, *estimate.metadata.warnings)),
     )
 
 
@@ -221,6 +238,7 @@ def estimate_pinchoff_viability(
         bubble_radius_metadata,
         bubble_radius_assumptions,
         bubble_radius_provenance,
+        bubble_radius_warnings,
     ) = _resolve_bubble_radius(
         bubble_radius_mm=bubble_radius_mm,
         thread_radius_um=affected_volume.thread_radius_um,
@@ -269,6 +287,7 @@ def estimate_pinchoff_viability(
     warnings = (
         *_BASE_WARNINGS,
         *affected_volume.warnings,
+        *bubble_radius_warnings,
     )
     if bubble_radius_source == _BUBBLE_RADIUS_SOURCE_INFERRED:
         warnings = (

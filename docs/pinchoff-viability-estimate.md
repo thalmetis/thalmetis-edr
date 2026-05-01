@@ -22,6 +22,29 @@ VVM mode treats system volume as constant over the exposure duration. The API
 does not model fed-batch volume changes, gas uptake, gas production, kLa, OTR,
 or changing system volume.
 
+## Calculation
+
+```text
+V_bubble = (4/3) * pi * R_b^3
+N_events = total_gas_volume / V_bubble
+Psi_raw = Psi0 - DeltaPsi_n * N_events * V_affected / V_system
+Psi_final = clip(Psi_raw, 0, 100)
+```
+
+For gas flow plus duration:
+
+```text
+total_gas_volume_l = gas_flow_rate_l_min * exposure_duration_h * 60
+```
+
+For VVM plus duration:
+
+```text
+total_gas_volume_l = vvm * system_volume_l * exposure_duration_h * 60
+```
+
+VVM mode assumes `system_volume_l` is constant over the exposure duration.
+
 The API does not infer cell-line thresholds. The user supplies the EDR
 threshold and single-event viability-loss assumptions.
 
