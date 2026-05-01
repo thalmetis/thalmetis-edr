@@ -79,21 +79,32 @@ _VVM_ASSUMPTION = (
 
 
 def _ensure_finite_positive(value: float, name: str) -> float:
-    numeric_value = float(value)
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be finite and positive.") from exc
     if not math.isfinite(numeric_value) or numeric_value <= 0.0:
         raise ValueError(f"{name} must be finite and positive.")
     return numeric_value
 
 
 def _ensure_finite_non_negative(value: float, name: str) -> float:
-    numeric_value = float(value)
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be finite and non-negative.") from exc
     if not math.isfinite(numeric_value) or numeric_value < 0.0:
         raise ValueError(f"{name} must be finite and non-negative.")
     return numeric_value
 
 
 def _ensure_percent(value: float, name: str) -> float:
-    numeric_value = float(value)
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            f"{name} must be finite and between 0 and 100 inclusive."
+        ) from exc
     if not math.isfinite(numeric_value) or not 0.0 <= numeric_value <= 100.0:
         raise ValueError(f"{name} must be finite and between 0 and 100 inclusive.")
     return numeric_value

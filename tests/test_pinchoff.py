@@ -239,7 +239,7 @@ def test_zero_gas_exposure_gives_zero_events_and_initial_viability() -> None:
 
 
 def test_invalid_total_gas_volume_raises() -> None:
-    for value in (-1.0, math.inf, math.nan):
+    for value in (-1.0, math.inf, math.nan, "not-a-number"):
         with pytest.raises(ValueError, match="total_gas_volume_l"):
             _estimate(total_gas_volume_l=value)
 
@@ -271,25 +271,25 @@ def test_invalid_exposure_duration_raises() -> None:
 
 
 def test_invalid_system_volume_raises() -> None:
-    for value in (0.0, -1.0, math.inf, math.nan):
+    for value in (0.0, -1.0, math.inf, math.nan, None):
         with pytest.raises(ValueError, match="system_volume_l"):
             _estimate(system_volume_l=value)
 
 
 def test_invalid_initial_viability_raises() -> None:
-    for value in (-1.0, 101.0, math.inf, math.nan):
+    for value in (-1.0, 101.0, math.inf, math.nan, None):
         with pytest.raises(ValueError, match="initial_viability_pct"):
             _estimate(initial_viability_pct=value)
 
 
 def test_invalid_single_event_viability_loss_raises() -> None:
-    for value in (-1.0, 101.0, math.inf, math.nan):
+    for value in (-1.0, 101.0, math.inf, math.nan, None):
         with pytest.raises(ValueError, match="single_event_viability_loss_pct"):
             _estimate(single_event_viability_loss_pct=value)
 
 
 def test_invalid_user_supplied_bubble_radius_raises() -> None:
-    for value in (0.0, -1.0, math.inf, math.nan):
+    for value in (0.0, -1.0, math.inf, math.nan, "not-a-number"):
         with pytest.raises(ValueError, match="bubble_radius_mm"):
             _estimate(bubble_radius_mm=value)
 
