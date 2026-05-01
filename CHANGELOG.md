@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 - 2026-05-01
+
 - Add a bounded McRae 2024 pinch-off viability sensitivity estimate that
   composes Figure 5a affected-volume interpolation, optional inferred Table 3
   calculator R_b, gas-exposure normalization, spherical bubble-volume/event-count
@@ -11,8 +13,8 @@
 - Add a bounded inferred Table 3 calculator `R_b` interpolation primitive over
   the packaged thread-radius grid.
 - Preserve v0.1 Table 3 reconstruction semantics; this does not add Equation
-  2, viability prediction, arbitrary bubble-size modeling, rupture,
-  coalescence, path-independence, GUI, or a web/server/cloud API.
+  2, validated industrial viability prediction, arbitrary bubble-size modeling,
+  rupture, coalescence, path-independence, GUI, or a web/server/cloud API.
 
 ## 0.1.0 - 2026-04-30
 
