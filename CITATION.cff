@@ -1,12 +1,13 @@
 cff-version: 1.2.0
 title: thalmetis-edr
 message: >-
-  If you use thalmetis-edr, please cite this package and the relevant scientific papers. Users should also cite McRae et al. 2024 and Walls et al. 2017.
+  If you use thalmetis-edr v0.2.0, please cite the v0.2.0 Zenodo DOI. The all-versions Zenodo concept DOI is 10.5281/zenodo.19932773. Users should also cite McRae et al. 2024 and Walls et al. 2017.
 type: software
 authors:
   - family-names: McRae
     given-names: Oliver
 version: 0.2.0
+doi: 10.5281/zenodo.19961963
 license: MIT
 repository-code: "https://github.com/thalmetis/thalmetis-edr"
 references:
