@@ -4,6 +4,7 @@ from thalmetis_edr.results import (
     EventCountResult,
     InterpolationMetadata,
     PinchoffAffectedVolumeEstimate,
+    PinchoffViabilityEstimate,
     Table3BubbleRadiusEstimate,
     Table3BubbleRadiusInterpolationMetadata,
     Table3ReproductionResult,
@@ -92,6 +93,38 @@ def test_named_payload_fields_exist() -> None:
         "bubble_radius_mm",
     )
     assert hasattr(ViabilityEstimate(), "final_viability")
+    assert hasattr(
+        PinchoffViabilityEstimate(
+            final_viability_pct=100.0,
+            raw_final_viability_pct=100.0,
+            clipped=False,
+            initial_viability_pct=100.0,
+            single_event_viability_loss_pct=100.0,
+            thread_radius_um=100.0,
+            edr_threshold_w_m3=1.0e7,
+            affected_volume_nl=1.0,
+            affected_volume_m3=1.0e-12,
+            bubble_radius_mm=1.0,
+            bubble_radius_m=1.0e-3,
+            bubble_radius_source="user_supplied",
+            bubble_volume_m3=1.0e-9,
+            gas_exposure_mode="total_gas_volume_l",
+            total_gas_volume_l=0.0,
+            total_gas_volume_m3=0.0,
+            gas_flow_rate_l_min=None,
+            exposure_duration_h=None,
+            vvm=None,
+            system_volume_l=1.0,
+            system_volume_m3=1.0e-3,
+            event_count=0.0,
+            affected_volume_metadata=metadata,
+            bubble_radius_metadata=None,
+            assumptions=(),
+            warnings=(),
+            source_provenance=(),
+        ),
+        "final_viability_pct",
+    )
     assert hasattr(ViabilitySensitivityResult(), "dataframe")
     assert hasattr(Table3ReproductionResult(), "dataframe")
     assert hasattr(Table3ReproductionResult(), "calculated_dataframe")

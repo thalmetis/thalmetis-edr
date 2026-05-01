@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add a bounded McRae 2024 pinch-off viability sensitivity estimate that
+  composes Figure 5a affected-volume interpolation, optional inferred Table 3
+  calculator R_b, gas-exposure normalization, spherical bubble-volume/event-count
+  arithmetic, and Equation 3 viability arithmetic.
 - Add a bounded McRae 2024 Figure 5a affected-volume interpolation primitive
   over the packaged thread-radius and EDR-threshold grid.
 - Add a bounded inferred Table 3 calculator `R_b` interpolation primitive over
