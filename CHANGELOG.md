@@ -13,8 +13,8 @@
 - Add a bounded inferred Table 3 calculator `R_b` interpolation primitive over
   the packaged thread-radius grid.
 - Preserve v0.1 Table 3 reconstruction semantics; this does not add Equation
-  2, viability prediction, arbitrary bubble-size modeling, rupture,
-  coalescence, path-independence, GUI, or a web/server/cloud API.
+  2, validated industrial viability prediction, arbitrary bubble-size modeling,
+  rupture, coalescence, path-independence, GUI, or a web/server/cloud API.
 
 ## 0.1.0 - 2026-04-30
 

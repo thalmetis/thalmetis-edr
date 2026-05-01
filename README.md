@@ -151,8 +151,10 @@ interfaces while keeping the scientific assumptions visible.
 
 ## Boundaries
 
-This repository is Track B open scientific hydrodynamic methodology tooling. It
-is not the main commercial Thalmetis transfer-readiness product.
+Within the broader Thalmetis project, this repository is the open scientific
+methodology track: hydrodynamic research tooling for reproducibility and
+sensitivity analysis. It is not the main commercial Thalmetis
+transfer-readiness product.
 
 `thalmetis-edr` does not include:
 
@@ -177,8 +179,8 @@ can be implemented directly from published equations, data, or figures.
 
 ## Citation
 
-For v0.2.0 release preparation, cite the package repository and the relevant
-scientific papers in `docs/references.md`.
+Until a v0.2.0 Zenodo DOI metadata PR is merged, cite the package repository
+and the relevant scientific papers in `docs/references.md`.
 
 The v0.1.0 archive DOI is
 https://doi.org/10.5281/zenodo.19932774. This is a v0.1.0 archive note and is
