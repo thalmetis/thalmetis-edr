@@ -5,6 +5,7 @@ from thalmetis_edr.affected_volume import (
     interpolate_pinchoff_affected_volume,
     walls_2017_rupture_affected_volume,
 )
+from thalmetis_edr.bubble_radius import interpolate_table3_bubble_radius
 from thalmetis_edr.bubbles import bubble_volume, event_count_from_gas_volume
 from thalmetis_edr.exposure import EventContribution, ExposureHistory, ThresholdExposure
 from thalmetis_edr.results import (
@@ -13,6 +14,8 @@ from thalmetis_edr.results import (
     EventCountResult,
     InterpolationMetadata,
     PinchoffAffectedVolumeEstimate,
+    Table3BubbleRadiusEstimate,
+    Table3BubbleRadiusInterpolationMetadata,
     Table3ReproductionResult,
     Table3ValidationResult,
     ViabilityEstimate,
@@ -39,6 +42,8 @@ __all__ = [
     "ExposureHistory",
     "InterpolationMetadata",
     "PinchoffAffectedVolumeEstimate",
+    "Table3BubbleRadiusEstimate",
+    "Table3BubbleRadiusInterpolationMetadata",
     "Table3ReproductionResult",
     "Table3ValidationResult",
     "ThresholdExposure",
@@ -50,6 +55,7 @@ __all__ = [
     "estimate_viability_after_events",
     "event_count_from_gas_volume",
     "interpolate_pinchoff_affected_volume",
+    "interpolate_table3_bubble_radius",
     "mcrae_2024_figure5a_volumes",
     "mcrae_2024_published_table3",
     "mcrae_2024_table3_inputs",

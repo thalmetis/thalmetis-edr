@@ -4,6 +4,8 @@ from thalmetis_edr.results import (
     EventCountResult,
     InterpolationMetadata,
     PinchoffAffectedVolumeEstimate,
+    Table3BubbleRadiusEstimate,
+    Table3BubbleRadiusInterpolationMetadata,
     Table3ReproductionResult,
     Table3ValidationResult,
     ViabilityEstimate,
@@ -63,6 +65,31 @@ def test_named_payload_fields_exist() -> None:
             warnings=(),
         ),
         "affected_volume_nl",
+    )
+    bubble_radius_metadata = Table3BubbleRadiusInterpolationMetadata(
+        method="loglog_linear",
+        source_table="test",
+        source_column="inferred_bubble_radius_for_calculator_mm",
+        input_thread_radius_um=100.0,
+        bracketing_thread_radius_um=(100.0, 100.0),
+        exact_grid_point=True,
+        interpolation_space="test",
+        domain_min_thread_radius_um=10.0,
+        domain_max_thread_radius_um=1250.0,
+        extrapolated=False,
+        warnings=(),
+    )
+    assert hasattr(bubble_radius_metadata, "source_column")
+    assert hasattr(
+        Table3BubbleRadiusEstimate(
+            bubble_radius_mm=1.0,
+            bubble_radius_m=1.0e-3,
+            thread_radius_um=100.0,
+            metadata=bubble_radius_metadata,
+            assumptions=(),
+            warnings=(),
+        ),
+        "bubble_radius_mm",
     )
     assert hasattr(ViabilityEstimate(), "final_viability")
     assert hasattr(ViabilitySensitivityResult(), "dataframe")
