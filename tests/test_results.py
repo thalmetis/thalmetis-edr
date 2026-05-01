@@ -2,6 +2,8 @@ from thalmetis_edr.results import (
     AffectedVolumeResult,
     BubbleVolumeResult,
     EventCountResult,
+    InterpolationMetadata,
+    PinchoffAffectedVolumeEstimate,
     Table3ReproductionResult,
     Table3ValidationResult,
     ViabilityEstimate,
@@ -33,6 +35,35 @@ def test_named_payload_fields_exist() -> None:
     assert hasattr(AffectedVolumeResult(), "affected_volume_m3")
     assert hasattr(BubbleVolumeResult(), "bubble_volume_m3")
     assert hasattr(EventCountResult(), "event_count")
+    metadata = InterpolationMetadata(
+        method="loglog_bilinear",
+        source_table="test",
+        input_thread_radius_um=100.0,
+        input_edr_threshold_w_m3=1.0e7,
+        bracketing_thread_radius_um=(100.0, 100.0),
+        bracketing_edr_threshold_w_m3=(1.0e7, 1.0e7),
+        exact_grid_point=True,
+        interpolation_space="test",
+        domain_min_thread_radius_um=10.0,
+        domain_max_thread_radius_um=1250.0,
+        domain_min_edr_threshold_w_m3=1.0e6,
+        domain_max_edr_threshold_w_m3=1.0e8,
+        extrapolated=False,
+        warnings=(),
+    )
+    assert hasattr(metadata, "source_table")
+    assert hasattr(
+        PinchoffAffectedVolumeEstimate(
+            affected_volume_nl=1.0,
+            affected_volume_m3=1.0e-12,
+            thread_radius_um=100.0,
+            edr_threshold_w_m3=1.0e7,
+            metadata=metadata,
+            assumptions=(),
+            warnings=(),
+        ),
+        "affected_volume_nl",
+    )
     assert hasattr(ViabilityEstimate(), "final_viability")
     assert hasattr(ViabilitySensitivityResult(), "dataframe")
     assert hasattr(Table3ReproductionResult(), "dataframe")

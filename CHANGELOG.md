@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Add a bounded McRae 2024 Figure 5a affected-volume interpolation primitive
+  over the packaged thread-radius and EDR-threshold grid.
+- Preserve v0.1 Table 3 reconstruction semantics; this does not add Equation
+  2, viability prediction, bubble-radius interpolation, rupture, coalescence,
+  path-independence, GUI, or a web/server/cloud API.
+
 ## 0.1.0 - 2026-04-30
 
 `thalmetis-edr` v0.1 prepares a bounded McRae 2024 Figure 5a / Table 3

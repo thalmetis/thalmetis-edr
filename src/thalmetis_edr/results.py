@@ -25,6 +25,39 @@ class AffectedVolumeResult:
     event_context: str = ""
 
 
+@dataclass(frozen=True, slots=True)
+class InterpolationMetadata:
+    """Interpolation metadata for packaged affected-volume estimates."""
+
+    method: str
+    source_table: str
+    input_thread_radius_um: float
+    input_edr_threshold_w_m3: float
+    bracketing_thread_radius_um: tuple[float, float]
+    bracketing_edr_threshold_w_m3: tuple[float, float]
+    exact_grid_point: bool
+    interpolation_space: str
+    domain_min_thread_radius_um: float
+    domain_max_thread_radius_um: float
+    domain_min_edr_threshold_w_m3: float
+    domain_max_edr_threshold_w_m3: float
+    extrapolated: bool
+    warnings: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class PinchoffAffectedVolumeEstimate:
+    """Interpolated McRae Figure 5a pinch-off affected-volume estimate."""
+
+    affected_volume_nl: float
+    affected_volume_m3: float
+    thread_radius_um: float
+    edr_threshold_w_m3: float
+    metadata: InterpolationMetadata
+    assumptions: tuple[str, ...]
+    warnings: tuple[str, ...]
+
+
 @dataclass(slots=True)
 class BubbleVolumeResult:
     """Bubble-volume result with source and provenance metadata."""
