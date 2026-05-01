@@ -74,11 +74,11 @@ def test_readme_and_docs_contain_required_boundaries() -> None:
         assert phrase in combined_text
 
 
-def test_citation_has_no_doi_until_real_zenodo_release() -> None:
+def test_citation_has_real_v010_zenodo_doi() -> None:
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
 
     assert "title: thalmetis-edr" in citation
     assert "given-names: Oliver" in citation
     assert "version: 0.1.0" in citation
-    assert "doi:" not in citation.lower()
-    assert "Zenodo DOI will be added after the first GitHub release" in citation
+    assert "doi: 10.5281/zenodo.19932774" in citation
+    assert "Zenodo DOI will be added after the first GitHub release" not in citation

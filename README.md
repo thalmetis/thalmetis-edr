@@ -1,5 +1,7 @@
 # thalmetis-edr
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19932774.svg)](https://doi.org/10.5281/zenodo.19932774)
+
 `thalmetis-edr` is a small open-source Python toolkit for implementing
 published affected-volume and pinch-off viability calculations. It is intended
 for research and educational use as a reproducibility and sensitivity-analysis
@@ -111,6 +113,14 @@ customer workflow. Any future GUI should live in a separate repository such as
 - not a replacement for process development, MSAT, validation, or experimental
   confirmation
 - not the main commercial Thalmetis transfer-readiness product
+
+## Citation
+
+McRae, O. (2026). thalmetis-edr (v0.1.0). Zenodo.
+https://doi.org/10.5281/zenodo.19932774
+
+Users should also cite the relevant scientific papers listed in
+`docs/references.md`.
 
 ## Development
 
