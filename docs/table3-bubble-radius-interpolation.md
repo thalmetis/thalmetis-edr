@@ -33,7 +33,7 @@ bracketing packaged thread radii.
 
 ## Boundaries
 
-This PR does not estimate viability.
+This primitive does not estimate viability.
 
 In later viability workflows, affected volume should be based on thread radius
 and EDR threshold. Event count should be based on user-supplied bubble radius

@@ -1,4 +1,4 @@
-"""Public API for the bounded thalmetis-edr v0.1 package."""
+"""Public API for the bounded thalmetis-edr package."""
 
 from thalmetis_edr.affected_volume import (
     affected_volume_from_threshold,
