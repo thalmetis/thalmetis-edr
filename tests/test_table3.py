@@ -167,7 +167,9 @@ def test_reproduce_table3_returns_expected_rounded_calculated_cells() -> None:
     pd.testing.assert_frame_equal(calculated, expected)
 
 
-def test_validate_table3_against_published_reports_expected_residuals() -> None:
+def test_validate_table3_against_published_reports_only_expected_residual_mismatches() -> (  # noqa: E501
+    None
+):
     result = validate_table3_against_published()
 
     assert result.passed is True
