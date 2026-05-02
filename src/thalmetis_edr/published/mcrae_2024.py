@@ -16,17 +16,12 @@ MCRAE_2024_FIGURE_5A = "McRae et al. 2024 Figure 5a"
 MCRAE_2024_MODEL_CONTEXT = "mcrae_2024_pinch_off"
 MCRAE_2024_TABLE3_CONTEXT = "mcrae_2024_table3"
 
-MCRAE_2024_FIGURE5A_VOLUME_FILENAME = (
-    "mcrae_2024_figure5a_bub80compare9_volumes.csv"
-)
+MCRAE_2024_FIGURE5A_VOLUME_FILENAME = "mcrae_2024_figure5a_bub80compare9_volumes.csv"
 MCRAE_2024_TABLE3_PUBLISHED_FILENAME = "mcrae_2024_table3_published.csv"
-MCRAE_2024_TABLE3_INFERRED_RADII_FILENAME = (
-    "mcrae_2024_table3_inferred_radii.csv"
-)
+MCRAE_2024_TABLE3_INFERRED_RADII_FILENAME = "mcrae_2024_table3_inferred_radii.csv"
 
 MCRAE_2024_FIGURE5A_SOURCE = (
-    "bub80compare9.m near-final author-script inferred Figure 5a "
-    "affected-volume data"
+    "bub80compare9.m near-final author-script inferred Figure 5a affected-volume data"
 )
 MCRAE_2024_TABLE3_PUBLISHED_SOURCE = "McRae et al. 2024 Table 3 published fixture"
 MCRAE_2024_TABLE3_INFERRED_RADII_SOURCE = (
