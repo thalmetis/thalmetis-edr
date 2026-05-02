@@ -12,8 +12,7 @@ from thalmetis_edr.viability import (
 
 def test_viability_stubs_return_structured_annotations() -> None:
     assert (
-        get_type_hints(estimate_viability_after_events)["return"]
-        is ViabilityEstimate
+        get_type_hints(estimate_viability_after_events)["return"] is ViabilityEstimate
     )
     assert get_type_hints(viability_sensitivity)["return"] is ViabilitySensitivityResult
 

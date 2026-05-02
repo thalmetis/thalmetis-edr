@@ -55,9 +55,7 @@ _PATHWAY_INPUT_PROVENANCE_FIELDS: tuple[str, ...] = (
 )
 _PACKAGE_METADATA_PROVENANCE = "McRae 2024 Table 3 metadata"
 _CALLER_OVERRIDE_PROVENANCE = "caller override"
-_SUPPORTED_TABLE3_THRESHOLDS_W_M3 = tuple(
-    spec[0] for spec in _THRESHOLD_COLUMN_SPECS
-)
+_SUPPORTED_TABLE3_THRESHOLDS_W_M3 = tuple(spec[0] for spec in _THRESHOLD_COLUMN_SPECS)
 
 
 def _threshold_suffix(threshold: float) -> str:
@@ -88,9 +86,10 @@ def _normalise_supported_thresholds(raw_thresholds: Any) -> tuple[float, float, 
 @lru_cache
 def _load_packaged_csv(filename: str) -> pd.DataFrame:
     csv_text = (
-        files("thalmetis_edr").joinpath("data").joinpath(filename).read_text(
-            encoding="utf-8"
-        )
+        files("thalmetis_edr")
+        .joinpath("data")
+        .joinpath(filename)
+        .read_text(encoding="utf-8")
     )
     return pd.read_csv(StringIO(csv_text))
 
@@ -179,9 +178,7 @@ def _sorted_key_records_from_set(
 
 def _key_set(frame: pd.DataFrame) -> set[tuple[int, float]]:
     return {
-        _normalise_key(
-            row["thread_radius_um"], row["published_bubble_radius_mm"]
-        )
+        _normalise_key(row["thread_radius_um"], row["published_bubble_radius_mm"])
         for row in frame.loc[:, list(_TABLE3_KEY_COLUMNS)].to_dict(orient="records")
     }
 
@@ -335,8 +332,10 @@ def _calculate_table3_dataframe(resolved: dict[str, Any]) -> pd.DataFrame:
 
         calculated_rows.append(calculated_row)
 
-    return pd.DataFrame(calculated_rows).sort_values("thread_radius_um").reset_index(
-        drop=True
+    return (
+        pd.DataFrame(calculated_rows)
+        .sort_values("thread_radius_um")
+        .reset_index(drop=True)
     )
 
 
@@ -421,16 +420,14 @@ def _validate_table3(
         mismatch
         for mismatch in actual_mismatches
         if any(
-            _same_mismatch_cell(mismatch, expected)
-            for expected in expected_mismatches
+            _same_mismatch_cell(mismatch, expected) for expected in expected_mismatches
         )
     ]
     unexpected_mismatches = [
         mismatch
         for mismatch in actual_mismatches
         if not any(
-            _same_mismatch_cell(mismatch, expected)
-            for expected in expected_mismatches
+            _same_mismatch_cell(mismatch, expected) for expected in expected_mismatches
         )
     ]
     missing_expected_mismatches = [

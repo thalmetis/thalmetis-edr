@@ -119,12 +119,8 @@ def test_figure5a_and_published_table_accessors_return_expected_values() -> None
         ],
     )
 
-    pd.testing.assert_frame_equal(
-        figure5a, expected_figure5a, rtol=0.0, atol=1.0e-15
-    )
-    pd.testing.assert_frame_equal(
-        published, expected_published, check_exact=True
-    )
+    pd.testing.assert_frame_equal(figure5a, expected_figure5a, rtol=0.0, atol=1.0e-15)
+    pd.testing.assert_frame_equal(published, expected_published, check_exact=True)
     pd.testing.assert_frame_equal(
         inferred_radii, expected_inferred_radii, rtol=0.0, atol=0.0
     )
@@ -171,8 +167,7 @@ def test_reproduce_table3_returns_expected_rounded_calculated_cells() -> None:
     pd.testing.assert_frame_equal(calculated, expected)
 
 
-def test_validate_table3_against_published_reports_only_expected_residual_mismatches(
-) -> None:
+def test_validate_table3_against_published_reports_expected_residuals() -> None:
     result = validate_table3_against_published()
 
     assert result.passed is True
@@ -280,9 +275,9 @@ def test_validation_fails_for_unexpected_mismatch_changes() -> None:
 
 def test_validation_fails_explicitly_for_unmatched_comparison_keys() -> None:
     published = mcrae_2024_published_table3()
-    published.loc[
-        published["thread_radius_um"] == 50, "published_bubble_radius_mm"
-    ] = 0.57
+    published.loc[published["thread_radius_um"] == 50, "published_bubble_radius_mm"] = (
+        0.57
+    )
 
     result = validate_table3_against_published(published_table3=published)
 

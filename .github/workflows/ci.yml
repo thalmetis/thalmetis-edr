@@ -39,6 +39,9 @@ jobs:
       - name: Run lint
         run: python -m ruff check . --no-cache
 
+      - name: Run format check
+        run: python -m ruff format --check .
+
       - name: Run example smoke tests
         run: |
           python examples/table3_sensitivity.py
